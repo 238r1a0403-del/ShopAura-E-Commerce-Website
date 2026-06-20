@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ShopAura — Complete Code Explanation</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #161618;
+    --surface2: #1e1e21;
+    --border: #2a2a2e;
+    --accent: #e8ff47;
+    --accent2: #47d9ff;
+    --accent3: #ff6b6b;
+    --accent4: #b8a9ff;
+    --green: #2ed573;
+    --text: #f0f0f0;
+    --muted: #888;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; line-height:1.7; }
+
+  /* HEADER */
+  .header {
+    text-align:center; padding:4rem 2rem 3rem;
+    background:radial-gradient(ellipse at 50% 0%, rgba(232,255,71,0.07) 0%, transparent 60%);
+    border-bottom:1px solid var(--border);
+  }
+  .logo { display:inline-flex; align-items:center; gap:0.6rem; margin-bottom:1.5rem; }
+  .hv { width:42px; height:42px; border-radius:9px; background:linear-gradient(135deg,var(--accent),#a8cc00); display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:0.9rem; color:#000; }
+  .brand { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; }
+  .brand span { color:var(--accent); }
+  .header h1 { font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800; margin-bottom:0.5rem; }
+  .header h1 em { color:var(--accent); font-style:normal; }
+  .header p { color:var(--muted); font-size:1rem; max-width:600px; margin:0 auto 1.5rem; }
+  .toc { display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap; }
+  .toc a { text-decoration:none; padding:0.35rem 0.9rem; border-radius:100px; border:1px solid var(--border); color:var(--muted); font-size:0.8rem; transition:0.2s; }
+  .toc a:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* LAYOUT */
+  .content { max-width:980px; margin:0 auto; padding:3rem 2rem; }
+  .file-section { margin-bottom:5rem; }
+  .file-header {
+    display:flex; align-items:center; gap:1rem; margin-bottom:2rem;
+    padding:1.25rem 1.5rem; border-radius:14px;
+    background:var(--surface); border:1px solid var(--border);
+    border-left:4px solid var(--accent);
+  }
+  .file-header.blue { border-left-color:var(--accent2); }
+  .file-header.purple { border-left-color:var(--accent4); }
+  .file-header.green { border-left-color:var(--green); }
+  .file-header.red { border-left-color:var(--accent3); }
+  .file-icon { font-size:2rem; flex-shrink:0; }
+  .file-meta { flex:1; }
+  .file-path { font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--muted); margin-bottom:0.3rem; }
+  .file-title { font-family:'Syne',sans-serif; font-weight:700; font-size:1.15rem; margin-bottom:0.2rem; }
+  .file-desc { font-size:0.88rem; color:var(--muted); }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background:#0a0a0c; border:1px solid var(--border); border-radius:10px;
+    overflow:hidden; margin:1.25rem 0;
+  }
+  .code-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.6rem 1rem; background:var(--surface); border-bottom:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--muted);
+  }
+  .code-header .dots { display:flex; gap:6px; }
+  .dot { width:10px; height:10px; border-radius:50%; }
+  .dot-red { background:#ff5f57; }
+  .dot-yellow { background:#febc2e; }
+  .dot-green { background:#28c840; }
+  pre {
+    padding:1.25rem 1.5rem; overflow-x:auto;
+    font-family:'JetBrains Mono',monospace; font-size:0.82rem; line-height:1.9;
+    white-space:pre; color:#c9d1d9;
+  }
+  /* Syntax colours */
+  .kw   { color:#ff79c6; }   /* keyword: const, function, if, return, async */
+  .fn   { color:#50fa7b; }   /* function names */
+  .str  { color:#f1fa8c; }   /* strings */
+  .num  { color:#bd93f9; }   /* numbers */
+  .cmt  { color:#6272a4; font-style:italic; } /* comments */
+  .cls  { color:#8be9fd; }   /* class/type names */
+  .prop { color:#ff9f43; }   /* object properties */
+  .op   { color:#ff79c6; }   /* operators */
+
+  /* EXPLANATION CARDS */
+  .explain { margin:1.5rem 0; }
+  .explain-title {
+    font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem;
+    margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem;
+  }
+  .explain-title .num-badge {
+    width:24px; height:24px; border-radius:6px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.7rem; font-weight:800; font-family:'JetBrains Mono',monospace;
+  }
+  .explain-body { padding:1rem 1.25rem; border-radius:10px; background:var(--surface); border:1px solid var(--border); font-size:0.88rem; line-height:1.8; color:#ccc; }
+  .explain-body strong { color:var(--text); }
+  .explain-body code { font-family:'JetBrains Mono',monospace; font-size:0.8rem; background:rgba(255,255,255,0.06); padding:0.1rem 0.4rem; border-radius:4px; color:var(--accent2); }
+  .explain-body .analogy { margin-top:0.75rem; padding:0.75rem 1rem; background:rgba(232,255,71,0.05); border-radius:8px; border-left:3px solid rgba(232,255,71,0.4); font-style:italic; color:var(--muted); }
+
+  /* INLINE ANNOTATIONS */
+  .annotated-code { position:relative; }
+  .line-explain {
+    display:block; background:rgba(71,217,255,0.05); border-left:3px solid rgba(71,217,255,0.3);
+    padding:0.35rem 1rem 0.35rem 1.5rem; font-family:'DM Sans',sans-serif;
+    font-size:0.78rem; color:#aaa; font-style:italic; white-space:normal;
+    margin:0 -1.5rem;
+  }
+
+  /* TIPS */
+  .tip {
+    display:flex; gap:0.75rem; padding:1rem 1.25rem; border-radius:10px; margin:1.25rem 0;
+    font-size:0.87rem; line-height:1.7;
+  }
+  .tip.info    { background:rgba(71,217,255,0.06); border:1px solid rgba(71,217,255,0.2); }
+  .tip.warn    { background:rgba(232,255,71,0.06);  border:1px solid rgba(232,255,71,0.2); }
+  .tip.success { background:rgba(46,213,115,0.06); border:1px solid rgba(46,213,115,0.2); }
+  .tip.danger  { background:rgba(255,107,107,0.06); border:1px solid rgba(255,107,107,0.2); }
+  .tip-icon { font-size:1.2rem; flex-shrink:0; line-height:1; }
+  .tip-body strong { display:block; margin-bottom:0.3rem; color:var(--text); font-size:0.9rem; }
+  .tip-body code { font-family:'JetBrains Mono',monospace; font-size:0.78rem; background:rgba(255,255,255,0.06); padding:0.1rem 0.4rem; border-radius:4px; }
+
+  /* FLOW DIAGRAM MINI */
+  .mini-flow { display:flex; flex-wrap:wrap; align-items:center; gap:0.4rem; margin:1rem 0; font-size:0.82rem; }
+  .mf-box { background:var(--surface2); border:1px solid var(--border); padding:0.3rem 0.75rem; border-radius:6px; }
+  .mf-arrow { color:var(--muted); }
+
+  /* DIVIDER */
+  .divider { height:1px; background:var(--border); margin:3rem 0; }
+
+  /* FOOTER */
+  footer { text-align:center; padding:3rem 2rem; border-top:1px solid var(--border); color:var(--muted); font-size:0.85rem; }
+  footer strong { color:var(--accent); }
+
+  @media(max-width:700px){ pre { font-size:0.72rem; } .header h1 { font-size:1.6rem; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="hv">HV</div>
+    <div class="brand">Shop<span>Aura</span></div>
+  </div>
+  <h1>Complete <em>Code Explanation</em></h1>
+  <p>Every file, every line — explained like you're 10. What it does, how it works, and why it was written that way.</p>
+  <div class="toc">
+    <a href="#env">📄 .env</a>
+    <a href="#server">⚡ server.js</a>
+    <a href="#db">🍃 db.js</a>
+    <a href="#auth-mid">🛡️ middleware/auth.js</a>
+    <a href="#user-model">👤 User.js</a>
+    <a href="#product-model">📦 Product.js</a>
+    <a href="#order-model">🛒 Order.js</a>
+    <a href="#auth-route">🔐 routes/auth.js</a>
+    <a href="#products-route">🏪 routes/products.js</a>
+    <a href="#orders-route">📋 routes/orders.js</a>
+    <a href="#frontend">🌐 index.html</a>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- .ENV -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="env">
+  <div class="file-header">
+    <div class="file-icon">🔒</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/.env</div>
+      <div class="file-title">Environment Variables — Secret Config File</div>
+      <div class="file-desc">Stores sensitive settings that should NEVER be shared or pushed to GitHub</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>.env</span></div>
+    <pre><span class="prop">PORT</span>=<span class="num">5000</span>
+<span class="prop">MONGO_URI</span>=<span class="str">mongodb://localhost:27017/codealpha_ecommerce</span>
+<span class="prop">SESSION_SECRET</span>=<span class="str">codealpha_secret_key_2024</span>
+<span class="prop">NODE_ENV</span>=<span class="str">development</span></pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(232,255,71,0.15);color:var(--accent);">1</span> What is a .env file?</div>
+    <div class="explain-body">
+      A <strong>.env file</strong> (short for "environment") stores secret values that your app needs to run — like passwords, API keys, and database addresses. Instead of writing these values directly inside your code (which is dangerous), you put them here and read them with <code>process.env.VARIABLE_NAME</code>.<br><br>
+      <strong>PORT=5000</strong> — Your server will listen on port 5000. Think of a port like a door number on your computer.<br>
+      <strong>MONGO_URI</strong> — The address of your MongoDB database. <code>localhost</code> = your own computer, <code>27017</code> = MongoDB's default port, <code>codealpha_ecommerce</code> = database name.<br>
+      <strong>SESSION_SECRET</strong> — A secret password used to encrypt user sessions (login tokens). If someone knows this, they could fake logins.<br>
+      <strong>NODE_ENV</strong> — Tells the app if it's running for development (testing) or production (real users).
+      <div class="analogy">🔑 Analogy: The .env file is like your house's key safe — it holds important access codes in one secure place, separate from the house itself.</div>
+    </div>
+  </div>
+
+  <div class="tip warn">
+    <div class="tip-icon">⚠️</div>
+    <div class="tip-body"><strong>NEVER share this file</strong> The .gitignore file is set up to exclude .env from Git — that's why it's listed there. If you push this to GitHub, anyone could access your database.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SERVER.JS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="server">
+  <div class="file-header blue">
+    <div class="file-icon">⚡</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/server.js</div>
+      <div class="file-title">Server Entry Point — The App's Starting Engine</div>
+      <div class="file-desc">This is the FIRST file Node.js runs. It starts everything — the web server, database connection, and all routes.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/server.js</span></div>
+    <pre><span class="cmt">// Line 1: Load the .env file first — before anything else</span>
+<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+
+<span class="cmt">// Lines 2-6: Import all the tools we need</span>
+<span class="kw">const</span> <span class="cls">express</span> = <span class="fn">require</span>(<span class="str">'express'</span>);       <span class="cmt">// web framework</span>
+<span class="kw">const</span> <span class="cls">session</span> = <span class="fn">require</span>(<span class="str">'express-session'</span>); <span class="cmt">// login sessions</span>
+<span class="kw">const</span> <span class="cls">cors</span>    = <span class="fn">require</span>(<span class="str">'cors'</span>);            <span class="cmt">// allow browser requests</span>
+<span class="kw">const</span> <span class="cls">path</span>    = <span class="fn">require</span>(<span class="str">'path'</span>);            <span class="cmt">// work with file paths</span>
+<span class="kw">const</span> <span class="fn">connectDB</span> = <span class="fn">require</span>(<span class="str">'./config/db'</span>);   <span class="cmt">// our database connector</span>
+
+<span class="cmt">// Line 8: Create the Express app — like starting the engine</span>
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+<span class="cmt">// Line 11: Connect to MongoDB immediately</span>
+<span class="fn">connectDB</span>();
+
+<span class="cmt">// Lines 14-26: MIDDLEWARE — code that runs on EVERY request</span>
+app.<span class="fn">use</span>(<span class="fn">cors</span>({ origin: <span class="kw">true</span>, credentials: <span class="kw">true</span> }));
+app.<span class="fn">use</span>(express.<span class="fn">json</span>());              <span class="cmt">// parse JSON from requests</span>
+app.<span class="fn">use</span>(express.<span class="fn">urlencoded</span>({ extended: <span class="kw">true</span> }));
+app.<span class="fn">use</span>(<span class="fn">session</span>({
+  secret:           process.env.<span class="prop">SESSION_SECRET</span>,
+  resave:           <span class="kw">false</span>,
+  saveUninitialized:<span class="kw">false</span>,
+  cookie: {
+    secure:  process.env.<span class="prop">NODE_ENV</span> === <span class="str">'production'</span>,
+    httpOnly:<span class="kw">true</span>,
+    maxAge:  <span class="num">7</span> * <span class="num">24</span> * <span class="num">60</span> * <span class="num">60</span> * <span class="num">1000</span>  <span class="cmt">// 7 days in milliseconds</span>
+  }
+}));
+
+<span class="cmt">// Line 29: Serve the HTML/CSS/JS frontend files</span>
+app.<span class="fn">use</span>(express.<span class="fn">static</span>(<span class="cls">path</span>.<span class="fn">join</span>(__dirname, <span class="str">'../frontend'</span>)));
+
+<span class="cmt">// Lines 32-34: Connect routes — each file handles its own URL paths</span>
+app.<span class="fn">use</span>(<span class="str">'/api/auth'</span>,     <span class="fn">require</span>(<span class="str">'./routes/auth'</span>));
+app.<span class="fn">use</span>(<span class="str">'/api/products'</span>, <span class="fn">require</span>(<span class="str">'./routes/products'</span>));
+app.<span class="fn">use</span>(<span class="str">'/api/orders'</span>,   <span class="fn">require</span>(<span class="str">'./routes/orders'</span>));
+
+<span class="cmt">// Line 42: Catch-all — for any URL not matched above, serve index.html</span>
+app.<span class="fn">get</span>(<span class="str">'*'</span>, (req, res) => {
+  res.<span class="fn">sendFile</span>(<span class="cls">path</span>.<span class="fn">join</span>(__dirname, <span class="str">'../frontend/index.html'</span>));
+});
+
+<span class="cmt">// Lines 46-50: Start listening on port 5000</span>
+<span class="kw">const</span> PORT = process.env.<span class="prop">PORT</span> || <span class="num">5000</span>;
+app.<span class="fn">listen</span>(PORT, () => {
+  console.<span class="fn">log</span>(<span class="str">`Server running on http://localhost:<span class="prop">${PORT}</span>`</span>);
+});</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(71,217,255,0.15);color:var(--accent2);">1</span> What is <code>require()</code>?</div>
+    <div class="explain-body">
+      <code>require()</code> is Node.js's way of <strong>importing</strong> a library or file — like <code>import</code> in Python. When you write <code>require('express')</code>, Node looks in your <code>node_modules</code> folder (which npm created) and loads the Express library.<br><br>
+      When you write <code>require('./config/db')</code>, the <code>./</code> means "look in this same project folder" and load that specific file.
+      <div class="analogy">🔧 Analogy: Like using <code>import pandas as pd</code> in Python — you bring in a tool before you use it.</div>
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(71,217,255,0.15);color:var(--accent2);">2</span> What is Middleware? (<code>app.use()</code>)</div>
+    <div class="explain-body">
+      <strong>Middleware</strong> is code that runs automatically on every request that comes into the server, before it reaches your route handlers.<br><br>
+      Think of it like a security checkpoint at an airport — every passenger (request) goes through the same checks before reaching the gate (route).<br><br>
+      <strong>express.json()</strong> — Reads the JSON body from requests (like login data) and makes it available as <code>req.body</code><br>
+      <strong>cors()</strong> — Lets the browser talk to the server (browsers block cross-origin requests by default)<br>
+      <strong>session()</strong> — Sets up cookie-based login sessions so the server remembers who is logged in
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(71,217,255,0.15);color:var(--accent2);">3</span> Sessions & Cookies</div>
+    <div class="explain-body">
+      <code>maxAge: 7 * 24 * 60 * 60 * 1000</code> — This calculates 7 days in milliseconds. Let's break it down:<br>
+      <code>7 days × 24 hours × 60 minutes × 60 seconds × 1000 milliseconds = 604,800,000 ms</code><br><br>
+      <strong>httpOnly: true</strong> — The session cookie cannot be accessed by JavaScript in the browser. This protects against XSS attacks (hackers stealing your cookie via JavaScript).<br>
+      <strong>secure: true in production</strong> — In production, cookies are only sent over HTTPS (encrypted connections), not plain HTTP.
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- DB.JS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="db">
+  <div class="file-header green">
+    <div class="file-icon">🍃</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/config/db.js</div>
+      <div class="file-title">Database Connector — Bridges Node.js to MongoDB</div>
+      <div class="file-desc">One job: connect to MongoDB when the server starts. If it fails, shut down the server.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/config/db.js</span></div>
+    <pre><span class="kw">const</span> <span class="cls">mongoose</span> = <span class="fn">require</span>(<span class="str">'mongoose'</span>);  <span class="cmt">// Mongoose = tool to talk to MongoDB</span>
+
+<span class="cmt">// Define the function that connects to the database</span>
+<span class="kw">const</span> <span class="fn">connectDB</span> = <span class="kw">async</span> () => {
+  <span class="kw">try</span> {
+    <span class="cmt">// Connect using the URL from .env file</span>
+    <span class="kw">const</span> conn = <span class="kw">await</span> <span class="cls">mongoose</span>.<span class="fn">connect</span>(process.env.<span class="prop">MONGO_URI</span>);
+
+    <span class="cmt">// If successful, print which server we connected to</span>
+    console.<span class="fn">log</span>(<span class="str">`MongoDB Connected: <span class="prop">${conn.connection.host}</span>`</span>);
+
+  } <span class="kw">catch</span> (error) {
+    <span class="cmt">// If connection failed, print error and STOP the app</span>
+    console.<span class="fn">error</span>(<span class="str">`MongoDB Error: <span class="prop">${error.message}</span>`</span>);
+    process.<span class="fn">exit</span>(<span class="num">1</span>);  <span class="cmt">// Exit with error code 1</span>
+  }
+};
+
+<span class="cmt">// Export this function so server.js can use it</span>
+module.exports = <span class="fn">connectDB</span>;</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">1</span> <code>async/await</code> — How JavaScript handles waiting</div>
+    <div class="explain-body">
+      Connecting to a database takes time — the computer has to send a message over the network and wait for a reply. <strong>async/await</strong> is JavaScript's way of waiting for slow operations without freezing everything else.<br><br>
+      <code>async</code> before a function means "this function might have to wait for something".<br>
+      <code>await</code> before a line means "pause here until this finishes, then continue".<br><br>
+      Without async/await, your code would try to use the database before the connection was ready, causing crashes.
+      <div class="analogy">☕ Analogy: Like ordering coffee and waiting at the counter (await) instead of going back to your seat and having to keep checking if it's ready.</div>
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">2</span> <code>try/catch</code> — Safe error handling</div>
+    <div class="explain-body">
+      <code>try { ... } catch (error) { ... }</code> is a safety net. Code inside <code>try</code> runs normally. If anything goes wrong (an error is thrown), the code inside <code>catch</code> runs instead of crashing the whole app.<br><br>
+      <code>process.exit(1)</code> — If the database can't connect, there's no point keeping the server running. This shuts it down with error code 1 (0 = success, 1 = error — a common convention in programming).
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">3</span> <code>module.exports</code> — How Node.js shares code between files</div>
+    <div class="explain-body">
+      In Node.js, every file is its own isolated module. To make a function available to other files, you must <strong>export</strong> it with <code>module.exports</code>.<br>
+      Then in server.js, <code>const connectDB = require('./config/db')</code> <strong>imports</strong> it.<br>
+      This is how all the files in this project communicate with each other.
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MIDDLEWARE/AUTH.JS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="auth-mid">
+  <div class="file-header purple">
+    <div class="file-icon">🛡️</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/middleware/auth.js</div>
+      <div class="file-title">Auth Middleware — The Security Guard</div>
+      <div class="file-desc">Two functions that protect routes — one checks if user is logged in, one checks if they are an admin.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/middleware/auth.js</span></div>
+    <pre><span class="cmt">// GUARD 1: Is anyone logged in at all?</span>
+<span class="kw">const</span> <span class="fn">requireAuth</span> = (req, res, next) => {
+
+  <span class="cmt">// req.session.userId is set when a user logs in</span>
+  <span class="kw">if</span> (!req.session.<span class="prop">userId</span>) {
+    <span class="cmt">// No userId in session = not logged in. Send 401 Unauthorized.</span>
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">'Please login to continue'</span> });
+  }
+  <span class="cmt">// User IS logged in — pass control to the next function (the route handler)</span>
+  <span class="fn">next</span>();
+};
+
+<span class="cmt">// GUARD 2: Is the user an ADMIN?</span>
+<span class="kw">const</span> <span class="fn">requireAdmin</span> = (req, res, next) => {
+
+  <span class="cmt">// Check BOTH: must be logged in AND have role = 'admin'</span>
+  <span class="kw">if</span> (!req.session.<span class="prop">userId</span> || req.session.<span class="prop">role</span> !== <span class="str">'admin'</span>) {
+    <span class="cmt">// 403 = Forbidden (you're logged in but don't have permission)</span>
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">403</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">'Admin access required'</span> });
+  }
+  <span class="fn">next</span>();
+};
+
+<span class="cmt">// Export BOTH functions as an object</span>
+module.exports = { <span class="fn">requireAuth</span>, <span class="fn">requireAdmin</span> };</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(184,169,255,0.15);color:var(--accent4);">1</span> The three magic parameters: <code>req</code>, <code>res</code>, <code>next</code></div>
+    <div class="explain-body">
+      Every Express middleware and route handler receives these three objects:<br><br>
+      <strong>req</strong> (request) — Everything about the incoming request. Who sent it, what data they sent, what cookies/session they have. <code>req.session.userId</code> is the user's ID stored in their session cookie.<br><br>
+      <strong>res</strong> (response) — Used to send something BACK to the browser. <code>res.json()</code> sends JSON data. <code>res.status(401)</code> sets the HTTP status code.<br><br>
+      <strong>next</strong> — A function that says "I'm done here, move to the next step". If you don't call <code>next()</code>, the request just hangs and never gets a response.
+      <div class="analogy">🏃 Analogy: Imagine a relay race. req is the baton, res is the finish line. next() passes the baton to the next runner.</div>
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(184,169,255,0.15);color:var(--accent4);">2</span> HTTP Status Codes</div>
+    <div class="explain-body">
+      Status codes tell the browser whether the request succeeded or why it failed:<br><br>
+      <code>200</code> — OK (success)<br>
+      <code>201</code> — Created (a new resource was made)<br>
+      <code>400</code> — Bad Request (you sent wrong/missing data)<br>
+      <code>401</code> — Unauthorized (you need to log in)<br>
+      <code>403</code> — Forbidden (logged in, but don't have permission)<br>
+      <code>404</code> — Not Found (the resource doesn't exist)<br>
+      <code>500</code> — Internal Server Error (something broke on the server)
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- USER MODEL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="user-model">
+  <div class="file-header green">
+    <div class="file-icon">👤</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/models/User.js</div>
+      <div class="file-title">User Model — The Blueprint for a User in the Database</div>
+      <div class="file-desc">Defines exactly what fields a User record has, their types, and special behaviour (like hashing passwords automatically).</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/models/User.js</span></div>
+    <pre><span class="kw">const</span> <span class="cls">mongoose</span> = <span class="fn">require</span>(<span class="str">'mongoose'</span>);
+<span class="kw">const</span> <span class="cls">bcrypt</span>   = <span class="fn">require</span>(<span class="str">'bcryptjs'</span>);  <span class="cmt">// password hashing library</span>
+
+<span class="cmt">// Define the SCHEMA — the shape/structure of a user record</span>
+<span class="kw">const</span> userSchema = <span class="kw">new</span> <span class="cls">mongoose</span>.<span class="cls">Schema</span>({
+
+  name: {
+    type:     <span class="cls">String</span>,
+    required: [<span class="kw">true</span>, <span class="str">'Name is required'</span>],  <span class="cmt">// [rule, error message]</span>
+    trim:     <span class="kw">true</span>   <span class="cmt">// removes spaces from start/end automatically</span>
+  },
+
+  email: {
+    type:      <span class="cls">String</span>,
+    required:  [<span class="kw">true</span>, <span class="str">'Email is required'</span>],
+    unique:    <span class="kw">true</span>,      <span class="cmt">// no two users can have the same email</span>
+    lowercase: <span class="kw">true</span>,      <span class="cmt">// always store emails in lowercase</span>
+    trim:      <span class="kw">true</span>
+  },
+
+  password: {
+    type:      <span class="cls">String</span>,
+    required:  [<span class="kw">true</span>, <span class="str">'Password is required'</span>],
+    minlength: <span class="num">6</span>           <span class="cmt">// minimum 6 characters</span>
+  },
+
+  role: {
+    type:    <span class="cls">String</span>,
+    enum:    [<span class="str">'user'</span>, <span class="str">'admin'</span>],  <span class="cmt">// only these two values allowed</span>
+    default: <span class="str">'user'</span>              <span class="cmt">// new accounts are 'user' by default</span>
+  },
+
+  address: {   <span class="cmt">// a nested object (like a dictionary inside a dictionary)</span>
+    street: <span class="cls">String</span>,
+    city:   <span class="cls">String</span>,
+    state:  <span class="cls">String</span>,
+    zip:    <span class="cls">String</span>,
+    country:<span class="cls">String</span>
+  }
+
+}, { timestamps: <span class="kw">true</span> });  <span class="cmt">// auto-adds createdAt and updatedAt fields</span>
+
+
+<span class="cmt">// PRE-SAVE HOOK — runs automatically BEFORE saving to DB</span>
+userSchema.<span class="fn">pre</span>(<span class="str">'save'</span>, <span class="kw">async</span> <span class="kw">function</span>(next) {
+
+  <span class="cmt">// Only hash if password was changed (skip if updating email, etc.)</span>
+  <span class="kw">if</span> (!<span class="kw">this</span>.<span class="fn">isModified</span>(<span class="str">'password'</span>)) <span class="kw">return</span> <span class="fn">next</span>();
+
+  <span class="cmt">// Hash the password with cost factor 10 (how many times to scramble it)</span>
+  <span class="kw">this</span>.password = <span class="kw">await</span> <span class="cls">bcrypt</span>.<span class="fn">hash</span>(<span class="kw">this</span>.password, <span class="num">10</span>);
+  <span class="fn">next</span>();  <span class="cmt">// continue with saving</span>
+});
+
+
+<span class="cmt">// CUSTOM METHOD — compare a plain password with the stored hash</span>
+userSchema.methods.<span class="fn">comparePassword</span> = <span class="kw">async</span> <span class="kw">function</span>(candidatePassword) {
+  <span class="kw">return</span> <span class="cls">bcrypt</span>.<span class="fn">compare</span>(candidatePassword, <span class="kw">this</span>.password);
+  <span class="cmt">// returns true if they match, false if not</span>
+};
+
+<span class="cmt">// Create and export the Model (a class that represents the 'users' collection)</span>
+module.exports = <span class="cls">mongoose</span>.<span class="fn">model</span>(<span class="str">'User'</span>, userSchema);</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">1</span> What is a Schema and Model?</div>
+    <div class="explain-body">
+      A <strong>Schema</strong> is like a blueprint or a table definition. It says "every User document in the database MUST have these fields, with these types and rules".<br><br>
+      A <strong>Model</strong> is a JavaScript class built from that schema. It gives you methods to Create, Read, Update, and Delete records:<br>
+      <code>User.create()</code> — insert a new user<br>
+      <code>User.find()</code> — find users<br>
+      <code>User.findById()</code> — find one user by ID<br>
+      <code>User.findByIdAndUpdate()</code> — update a user
+      <div class="analogy">📐 Analogy: Schema = the form template (empty fields). Model = the stamp/machine that creates and manages those filled forms.</div>
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">2</span> How does password hashing work?</div>
+    <div class="explain-body">
+      <code>bcrypt.hash('mypassword123', 10)</code> converts the plain text password into something like:<br>
+      <code>$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy</code><br><br>
+      The <code>10</code> is the <strong>salt rounds</strong> — how many times bcrypt scrambles the password. More = more secure but slower. 10 is the industry standard.<br><br>
+      The magic of bcrypt: you can NEVER reverse the hash back to the original password. But you CAN check if a new input matches the stored hash using <code>bcrypt.compare()</code>.<br><br>
+      <strong>So when a user logs in</strong>: you hash their input and compare it to the stored hash. If they match, the password is correct — without ever knowing what the original was.
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">3</span> Pre-save hooks — automatic code before saving</div>
+    <div class="explain-body">
+      <code>userSchema.pre('save', function() { ... })</code> registers a function that runs automatically <strong>every time a User document is saved</strong>.<br><br>
+      Notice <code>this.isModified('password')</code> — <code>this</code> refers to the user document being saved. If the user only updated their email address (password didn't change), we skip re-hashing. Otherwise we'd hash an already-hashed password!<br><br>
+      Also notice we use <code>function</code> keyword here, not arrow function <code>() =></code>. This is because <code>this</code> inside a regular function refers to the document, but inside an arrow function <code>this</code> would be undefined.
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PRODUCT MODEL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="product-model">
+  <div class="file-header green">
+    <div class="file-icon">📦</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/models/Product.js</div>
+      <div class="file-title">Product Model — Blueprint for a Product in the Database</div>
+      <div class="file-desc">Defines the shape of every product record — name, price, category, stock, rating, and more.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/models/Product.js</span></div>
+    <pre><span class="kw">const</span> <span class="cls">mongoose</span> = <span class="fn">require</span>(<span class="str">'mongoose'</span>);
+
+<span class="kw">const</span> productSchema = <span class="kw">new</span> <span class="cls">mongoose</span>.<span class="cls">Schema</span>({
+
+  name:  { type: <span class="cls">String</span>, required: [<span class="kw">true</span>, <span class="str">'Product name is required'</span>], trim: <span class="kw">true</span> },
+  description: { type: <span class="cls">String</span>, required: [<span class="kw">true</span>, <span class="str">'Description is required'</span>] },
+
+  price: {
+    type:     <span class="cls">Number</span>,
+    required: [<span class="kw">true</span>, <span class="str">'Price is required'</span>],
+    min:      <span class="num">0</span>    <span class="cmt">// price cannot be negative</span>
+  },
+
+  category: {
+    type:     <span class="cls">String</span>,
+    required: [<span class="kw">true</span>, <span class="str">'Category is required'</span>],
+    <span class="cmt">// enum = only these exact values are allowed</span>
+    enum: [<span class="str">'Electronics'</span>, <span class="str">'Clothing'</span>, <span class="str">'Books'</span>, <span class="str">'Home'</span>,
+           <span class="str">'Sports'</span>, <span class="str">'Beauty'</span>, <span class="str">'Toys'</span>, <span class="str">'Other'</span>]
+  },
+
+  stock:      { type: <span class="cls">Number</span>, default: <span class="num">0</span>,   min: <span class="num">0</span> },
+  image:      { type: <span class="cls">String</span>, default: <span class="str">'/images/default-product.jpg'</span> },
+  rating:     { type: <span class="cls">Number</span>, default: <span class="num">0</span>,   min: <span class="num">0</span>, max: <span class="num">5</span> },
+  numReviews: { type: <span class="cls">Number</span>, default: <span class="num">0</span> }
+
+}, { timestamps: <span class="kw">true</span> });
+
+module.exports = <span class="cls">mongoose</span>.<span class="fn">model</span>(<span class="str">'Product'</span>, productSchema);</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">1</span> Key concepts in this schema</div>
+    <div class="explain-body">
+      <strong>enum</strong> — Restricts a field to only specific values. If someone tries to create a product with <code>category: "Food"</code>, MongoDB will reject it automatically. This is like a CHECK constraint in SQL.<br><br>
+      <strong>min / max</strong> — Validates number ranges. <code>min: 0</code> on price means you can't store a negative price. <code>min: 0, max: 5</code> on rating enforces the star scale.<br><br>
+      <strong>default</strong> — If a value isn't provided when creating a product, use this default. So if you don't provide an image URL, it will use the default placeholder image.
+      <div class="analogy">📋 Analogy: Think of it like a SQL table: <code>category VARCHAR NOT NULL CHECK(category IN ('Electronics','Clothing'...))</code> — same idea, different syntax.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ORDER MODEL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="order-model">
+  <div class="file-header green">
+    <div class="file-icon">🛒</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/models/Order.js</div>
+      <div class="file-title">Order Model — Blueprint for an Order (with nested items)</div>
+      <div class="file-desc">Most complex model — an order links to a user, contains an array of items, a shipping address, and tracks status.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/models/Order.js</span></div>
+    <pre><span class="kw">const</span> <span class="cls">mongoose</span> = <span class="fn">require</span>(<span class="str">'mongoose'</span>);
+
+<span class="cmt">// A NESTED schema for each item INSIDE an order</span>
+<span class="kw">const</span> orderItemSchema = <span class="kw">new</span> <span class="cls">mongoose</span>.<span class="cls">Schema</span>({
+  product:  { type: <span class="cls">mongoose</span>.<span class="cls">Schema</span>.<span class="cls">Types</span>.<span class="cls">ObjectId</span>, ref: <span class="str">'Product'</span> },
+  <span class="cmt">// ^ ObjectId reference = Foreign Key linking to the Product collection</span>
+  name:     <span class="cls">String</span>,   <span class="cmt">// stored directly so history is preserved</span>
+  price:    <span class="cls">Number</span>,   <span class="cmt">// price at time of purchase (won't change if product updates)</span>
+  quantity: { type: <span class="cls">Number</span>, required: <span class="kw">true</span>, min: <span class="num">1</span> },
+  image:    <span class="cls">String</span>
+});
+
+<span class="cmt">// The main Order schema</span>
+<span class="kw">const</span> orderSchema = <span class="kw">new</span> <span class="cls">mongoose</span>.<span class="cls">Schema</span>({
+
+  <span class="cmt">// Link to the User who placed this order (like a Foreign Key)</span>
+  user: { type: <span class="cls">mongoose</span>.<span class="cls">Schema</span>.<span class="cls">Types</span>.<span class="cls">ObjectId</span>, ref: <span class="str">'User'</span>, required: <span class="kw">true</span> },
+
+  <span class="cmt">// Array of items — uses the nested orderItemSchema above</span>
+  items: [orderItemSchema],
+
+  shippingAddress: {  <span class="cmt">// all required — can't order without an address</span>
+    street:  { type: <span class="cls">String</span>, required: <span class="kw">true</span> },
+    city:    { type: <span class="cls">String</span>, required: <span class="kw">true</span> },
+    state:   { type: <span class="cls">String</span>, required: <span class="kw">true</span> },
+    zip:     { type: <span class="cls">String</span>, required: <span class="kw">true</span> },
+    country: { type: <span class="cls">String</span>, required: <span class="kw">true</span> }
+  },
+
+  totalPrice:    { type: <span class="cls">Number</span>, required: <span class="kw">true</span> },
+
+  status: {
+    type:    <span class="cls">String</span>,
+    enum:    [<span class="str">'pending'</span>, <span class="str">'processing'</span>, <span class="str">'shipped'</span>, <span class="str">'delivered'</span>, <span class="str">'cancelled'</span>],
+    default: <span class="str">'pending'</span>   <span class="cmt">// every new order starts as 'pending'</span>
+  },
+
+  paymentMethod: { type: <span class="cls">String</span>, default: <span class="str">'COD'</span> },
+  paidAt:        <span class="cls">Date</span>,  <span class="cmt">// only set when payment is confirmed</span>
+  deliveredAt:   <span class="cls">Date</span>   <span class="cmt">// only set when delivered</span>
+
+}, { timestamps: <span class="kw">true</span> });
+
+module.exports = <span class="cls">mongoose</span>.<span class="fn">model</span>(<span class="str">'Order'</span>, orderSchema);</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">1</span> ObjectId References — MongoDB's version of Foreign Keys</div>
+    <div class="explain-body">
+      <code>type: mongoose.Schema.Types.ObjectId, ref: 'User'</code> — This creates a link between collections. The <code>user</code> field stores a User's <code>_id</code> value (MongoDB auto-generates an ID for every document).<br><br>
+      When you do <code>Order.find().populate('user', 'name email')</code>, Mongoose automatically fetches the linked User's name and email and attaches it to the result. Without populate, you'd only get the ID.
+      <div class="analogy">🔗 SQL equivalent: <code>FOREIGN KEY (user_id) REFERENCES users(id)</code></div>
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(46,213,115,0.15);color:var(--green);">2</span> Why store name and price inside the order item?</div>
+    <div class="explain-body">
+      Notice <code>name: String, price: Number</code> are stored <strong>directly inside the order item</strong>, even though we have a reference to the product.<br><br>
+      This is intentional — it's called <strong>data denormalization</strong>. If a product's price changes tomorrow, your old order should still show the price you actually paid. If we only stored the product ID and looked it up later, we'd get today's price, not the original price. By copying the name and price at the time of purchase, we preserve the order history accurately.
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ROUTES/AUTH.JS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="auth-route">
+  <div class="file-header red">
+    <div class="file-icon">🔐</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/routes/auth.js</div>
+      <div class="file-title">Auth Routes — Register, Login, Logout, Get Current User</div>
+      <div class="file-desc">Handles all user authentication. Every route here becomes a real URL the browser can call.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/routes/auth.js — Register endpoint</span></div>
+    <pre><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> router  = express.<span class="fn">Router</span>();     <span class="cmt">// creates a mini Express app for this group</span>
+<span class="kw">const</span> <span class="cls">User</span>    = <span class="fn">require</span>(<span class="str">'../models/User'</span>);
+
+<span class="cmt">// ─── POST /api/auth/register ───────────────────────────</span>
+router.<span class="fn">post</span>(<span class="str">'/register'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">try</span> {
+    <span class="cmt">// Step 1: Extract the data sent by the browser</span>
+    <span class="kw">const</span> { name, email, password } = req.body;
+    <span class="cmt">// req.body = { name: "Praveen", email: "p@g.com", password: "abc123" }</span>
+
+    <span class="cmt">// Step 2: Validate — did they send all fields?</span>
+    <span class="kw">if</span> (!name || !email || !password) {
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">'All fields required'</span> });
+    }
+
+    <span class="cmt">// Step 3: Check if email already exists in DB</span>
+    <span class="kw">const</span> existingUser = <span class="kw">await</span> <span class="cls">User</span>.<span class="fn">findOne</span>({ email });
+    <span class="kw">if</span> (existingUser) {
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">'Email already registered'</span> });
+    }
+
+    <span class="cmt">// Step 4: Create user in DB (password is hashed automatically by the pre-save hook)</span>
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="cls">User</span>.<span class="fn">create</span>({ name, email, password });
+
+    <span class="cmt">// Step 5: Start a session — "remember" this user is logged in</span>
+    req.session.<span class="prop">userId</span> = user._id;
+    req.session.<span class="prop">role</span>   = user.role;
+
+    <span class="cmt">// Step 6: Send back success + user info (NEVER send the password back!)</span>
+    res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>({
+      success: <span class="kw">true</span>,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+    });
+  } <span class="kw">catch</span> (error) {
+    res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: error.message });
+  }
+});</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/routes/auth.js — Login & Logout endpoints</span></div>
+    <pre><span class="cmt">// ─── POST /api/auth/login ──────────────────────────────</span>
+router.<span class="fn">post</span>(<span class="str">'/login'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> { email, password } = req.body;
+
+    <span class="cmt">// Step 1: Find the user by email</span>
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="cls">User</span>.<span class="fn">findOne</span>({ email });
+    <span class="kw">if</span> (!user) {
+      <span class="cmt">// Say "Invalid email or password" — don't reveal WHICH is wrong (security!)</span>
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">'Invalid email or password'</span> });
+    }
+
+    <span class="cmt">// Step 2: Compare the typed password with the stored hash</span>
+    <span class="kw">const</span> isMatch = <span class="kw">await</span> user.<span class="fn">comparePassword</span>(password);
+    <span class="kw">if</span> (!isMatch) {
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">'Invalid email or password'</span> });
+    }
+
+    <span class="cmt">// Step 3: Password matches! Create session.</span>
+    req.session.<span class="prop">userId</span> = user._id;
+    req.session.<span class="prop">role</span>   = user.role;
+
+    res.<span class="fn">json</span>({ success: <span class="kw">true</span>, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+
+  } <span class="kw">catch</span> (error) {
+    res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: error.message });
+  }
+});
+
+<span class="cmt">// ─── POST /api/auth/logout ─────────────────────────────</span>
+router.<span class="fn">post</span>(<span class="str">'/logout'</span>, (req, res) => {
+  req.session.<span class="fn">destroy</span>();  <span class="cmt">// delete the session from server memory</span>
+  res.<span class="fn">json</span>({ success: <span class="kw">true</span>, message: <span class="str">'Logged out'</span> });
+});
+
+<span class="cmt">// ─── GET /api/auth/me ─────────────────────────────────</span>
+router.<span class="fn">get</span>(<span class="str">'/me'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">if</span> (!req.session.<span class="prop">userId</span>) <span class="kw">return</span> res.<span class="fn">json</span>({ success: <span class="kw">false</span>, user: <span class="kw">null</span> });
+  <span class="kw">const</span> user = <span class="kw">await</span> <span class="cls">User</span>.<span class="fn">findById</span>(req.session.<span class="prop">userId</span>).<span class="fn">select</span>(<span class="str">'-password'</span>);
+  <span class="cmt">// .select('-password') = return all fields EXCEPT the password</span>
+  res.<span class="fn">json</span>({ success: <span class="kw">true</span>, user });
+});
+
+module.exports = router;</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(255,107,107,0.15);color:var(--accent3);">1</span> Why say "Invalid email or password" instead of "Email not found"?</div>
+    <div class="explain-body">
+      This is a <strong>security best practice</strong>. If you say "Email not found", a hacker knows that email doesn't exist and can try a different one. If you say "Password wrong", they know the email EXISTS and can brute-force the password.<br><br>
+      By giving the same vague error for both cases, you don't reveal any useful information to an attacker.
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(255,107,107,0.15);color:var(--accent3);">2</span> Destructuring — unpacking objects cleanly</div>
+    <div class="explain-body">
+      <code>const { name, email, password } = req.body;</code><br><br>
+      This is ES6 <strong>object destructuring</strong>. Instead of writing:<br>
+      <code>const name = req.body.name;</code><br>
+      <code>const email = req.body.email;</code><br>
+      <code>const password = req.body.password;</code><br><br>
+      You write it in one line. Much cleaner! The same pattern works in Python: <code>name, email = user_data</code>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ROUTES/PRODUCTS.JS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="products-route">
+  <div class="file-header blue">
+    <div class="file-icon">🏪</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/routes/products.js</div>
+      <div class="file-title">Product Routes — The Most Feature-Rich File</div>
+      <div class="file-desc">Search, filter, sort, paginate, CRUD, and seed. This file shows powerful MongoDB query techniques.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/routes/products.js — GET all products with filters</span></div>
+    <pre><span class="cmt">// GET /api/products?category=Electronics&search=phone&sort=price_asc&page=1</span>
+router.<span class="fn">get</span>(<span class="str">'/'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">try</span> {
+    <span class="cmt">// Read query params from the URL (after the ? symbol)</span>
+    <span class="cmt">// page=1 and limit=12 are defaults if not provided</span>
+    <span class="kw">const</span> { category, search, sort, minPrice, maxPrice, page = <span class="num">1</span>, limit = <span class="num">12</span> } = req.query;
+
+    <span class="cmt">// Build the filter object dynamically</span>
+    <span class="kw">const</span> query = {};
+
+    <span class="cmt">// Only add category filter if one was passed in the URL</span>
+    <span class="kw">if</span> (category) query.<span class="prop">category</span> = category;
+
+    <span class="cmt">// $regex = MongoDB's search operator. Like SQL LIKE '%phone%'</span>
+    <span class="cmt">// $options: 'i' = case-insensitive (matches "Phone", "PHONE", "phone")</span>
+    <span class="kw">if</span> (search) query.<span class="prop">name</span> = { <span class="prop">$regex</span>: search, <span class="prop">$options</span>: <span class="str">'i'</span> };
+
+    <span class="cmt">// Price range filter</span>
+    <span class="kw">if</span> (minPrice || maxPrice) {
+      query.<span class="prop">price</span> = {};
+      <span class="kw">if</span> (minPrice) query.<span class="prop">price</span>.<span class="prop">$gte</span> = <span class="cls">Number</span>(minPrice);  <span class="cmt">// $gte = greater than or equal</span>
+      <span class="kw">if</span> (maxPrice) query.<span class="prop">price</span>.<span class="prop">$lte</span> = <span class="cls">Number</span>(maxPrice);  <span class="cmt">// $lte = less than or equal</span>
+    }
+
+    <span class="cmt">// Build sort object. 1 = ascending, -1 = descending</span>
+    <span class="kw">const</span> sortOption = sort === <span class="str">'price_asc'</span>  ? { price: <span class="num">1</span>  }   <span class="cmt">// cheapest first</span>
+                     : sort === <span class="str">'price_desc'</span> ? { price: <span class="num">-1</span> }   <span class="cmt">// expensive first</span>
+                     : sort === <span class="str">'rating'</span>     ? { rating: <span class="num">-1</span> }  <span class="cmt">// highest rated first</span>
+                     : { createdAt: <span class="num">-1</span> };                        <span class="cmt">// newest first (default)</span>
+
+    <span class="cmt">// PAGINATION: skip records from previous pages</span>
+    <span class="cmt">// Page 1: skip 0, Page 2: skip 12, Page 3: skip 24...</span>
+    <span class="kw">const</span> skip  = (<span class="cls">Number</span>(page) - <span class="num">1</span>) * <span class="cls">Number</span>(limit);
+    <span class="kw">const</span> total = <span class="kw">await</span> <span class="cls">Product</span>.<span class="fn">countDocuments</span>(query);  <span class="cmt">// total matching records</span>
+    <span class="kw">const</span> products = <span class="kw">await</span> <span class="cls">Product</span>.<span class="fn">find</span>(query)
+                                     .<span class="fn">sort</span>(sortOption)
+                                     .<span class="fn">skip</span>(skip)
+                                     .<span class="fn">limit</span>(<span class="cls">Number</span>(limit));
+
+    res.<span class="fn">json</span>({
+      success:  <span class="kw">true</span>,
+      products,
+      total,
+      page:  <span class="cls">Number</span>(page),
+      pages: <span class="cls">Math</span>.<span class="fn">ceil</span>(total / limit)  <span class="cmt">// total pages needed</span>
+    });
+  } <span class="kw">catch</span> (error) {
+    res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: error.message });
+  }
+});</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(71,217,255,0.15);color:var(--accent2);">1</span> MongoDB Query Operators — like SQL WHERE clauses</div>
+    <div class="explain-body">
+      MongoDB uses special <code>$</code> prefixed operators inside the query object. They map directly to SQL concepts:<br><br>
+      <code>{ name: { $regex: "phone", $options: "i" } }</code> → SQL: <code>WHERE name LIKE '%phone%'</code><br>
+      <code>{ price: { $gte: 500 } }</code> → SQL: <code>WHERE price >= 500</code><br>
+      <code>{ price: { $lte: 5000 } }</code> → SQL: <code>WHERE price &lt;= 5000</code><br>
+      <code>{ category: "Electronics" }</code> → SQL: <code>WHERE category = 'Electronics'</code><br><br>
+      You can combine them: <code>{ price: { $gte: 500, $lte: 5000 } }</code> → SQL: <code>WHERE price BETWEEN 500 AND 5000</code>
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(71,217,255,0.15);color:var(--accent2);">2</span> Pagination — showing results in pages</div>
+    <div class="explain-body">
+      Imagine you have 100 products but want to show 12 per page:<br><br>
+      <strong>Page 1:</strong> skip=0, show records 1-12<br>
+      <strong>Page 2:</strong> skip=12, show records 13-24<br>
+      <strong>Page 3:</strong> skip=24, show records 25-36<br><br>
+      Formula: <code>skip = (page - 1) × limit</code><br><br>
+      <code>Math.ceil(total / limit)</code> calculates total pages. If you have 25 products and show 12 per page: <code>Math.ceil(25/12) = 3</code> pages. (ceil = round UP)
+      <div class="analogy">📚 SQL equivalent: <code>LIMIT 12 OFFSET 24</code></div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/routes/products.js — Admin CRUD + Seed</span></div>
+    <pre><span class="cmt">// Admin-only: Create product</span>
+router.<span class="fn">post</span>(<span class="str">'/'</span>, <span class="fn">requireAdmin</span>, <span class="kw">async</span> (req, res) => {
+  <span class="cmt">// requireAdmin runs FIRST (middleware). Only reaches here if admin.</span>
+  <span class="kw">const</span> product = <span class="kw">await</span> <span class="cls">Product</span>.<span class="fn">create</span>(req.body);
+  res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>({ success: <span class="kw">true</span>, product });
+});
+
+<span class="cmt">// Admin-only: Update product (findByIdAndUpdate)</span>
+router.<span class="fn">put</span>(<span class="str">'/:id'</span>, <span class="fn">requireAdmin</span>, <span class="kw">async</span> (req, res) => {
+  <span class="cmt">// :id is a URL parameter. If URL is /api/products/abc123, then req.params.id = 'abc123'</span>
+  <span class="kw">const</span> product = <span class="kw">await</span> <span class="cls">Product</span>.<span class="fn">findByIdAndUpdate</span>(
+    req.params.id,
+    req.body,
+    { <span class="kw">new</span>: <span class="kw">true</span>, runValidators: <span class="kw">true</span> }
+    <span class="cmt">// new:true = return the UPDATED document (not the old one)</span>
+    <span class="cmt">// runValidators:true = re-validate schema rules on update</span>
+  );
+  res.<span class="fn">json</span>({ success: <span class="kw">true</span>, product });
+});
+
+<span class="cmt">// Seed sample data — deletes all products then inserts 12 samples</span>
+router.<span class="fn">post</span>(<span class="str">'/seed/run'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">await</span> <span class="cls">Product</span>.<span class="fn">deleteMany</span>({});         <span class="cmt">// {} = no filter = delete ALL</span>
+  <span class="kw">const</span> sampleProducts = [ <span class="cmt">/* 12 product objects */</span> ];
+  <span class="kw">await</span> <span class="cls">Product</span>.<span class="fn">insertMany</span>(sampleProducts); <span class="cmt">// insert all at once (faster than one-by-one)</span>
+  res.<span class="fn">json</span>({ success: <span class="kw">true</span>, message: <span class="str">'12 products seeded'</span> });
+});</pre>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ROUTES/ORDERS.JS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="orders-route">
+  <div class="file-header purple">
+    <div class="file-icon">📋</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/backend/routes/orders.js</div>
+      <div class="file-title">Order Routes — Place Orders, Track Stock, View History</div>
+      <div class="file-desc">The most complex route file. Validates stock, calculates totals, deducts inventory, and creates orders atomically.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>backend/routes/orders.js — Place order</span></div>
+    <pre><span class="cmt">// POST /api/orders — requires login</span>
+router.<span class="fn">post</span>(<span class="str">'/'</span>, <span class="fn">requireAuth</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> { items, shippingAddress, paymentMethod } = req.body;
+    <span class="cmt">// items = [{ productId: "abc", quantity: 2 }, ...]</span>
+
+    <span class="kw">if</span> (!items || items.length === <span class="num">0</span>) {
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">'No items in order'</span> });
+    }
+
+    <span class="kw">let</span> totalPrice = <span class="num">0</span>;
+    <span class="kw">const</span> orderItems = [];
+
+    <span class="cmt">// Loop through every item in the cart</span>
+    <span class="kw">for</span> (<span class="kw">const</span> item <span class="kw">of</span> items) {
+
+      <span class="cmt">// Fetch CURRENT product data from DB (to get real price and stock)</span>
+      <span class="kw">const</span> product = <span class="kw">await</span> <span class="cls">Product</span>.<span class="fn">findById</span>(item.<span class="prop">productId</span>);
+      <span class="kw">if</span> (!product) {
+        <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">`Product not found`</span> });
+      }
+
+      <span class="cmt">// Check if there's enough stock</span>
+      <span class="kw">if</span> (product.<span class="prop">stock</span> < item.<span class="prop">quantity</span>) {
+        <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: <span class="str">`Insufficient stock for ${product.name}`</span> });
+      }
+
+      <span class="cmt">// Build the order item with DB data (not client data — can't trust browser!)</span>
+      orderItems.<span class="fn">push</span>({
+        product:  product._id,
+        name:     product.name,    <span class="cmt">// snapshot of name at purchase time</span>
+        price:    product.price,   <span class="cmt">// snapshot of price at purchase time</span>
+        quantity: item.quantity,
+        image:    product.image
+      });
+
+      <span class="cmt">// Add to running total using the REAL price from DB</span>
+      totalPrice += product.<span class="prop">price</span> * item.<span class="prop">quantity</span>;
+
+      <span class="cmt">// Deduct stock immediately</span>
+      product.<span class="prop">stock</span> -= item.<span class="prop">quantity</span>;
+      <span class="kw">await</span> product.<span class="fn">save</span>();  <span class="cmt">// save updated stock to DB</span>
+    }
+
+    <span class="cmt">// Create the order with the logged-in user's ID (from session)</span>
+    <span class="kw">const</span> order = <span class="kw">await</span> <span class="cls">Order</span>.<span class="fn">create</span>({
+      user:            req.session.<span class="prop">userId</span>,  <span class="cmt">// who placed the order</span>
+      items:           orderItems,
+      shippingAddress,
+      totalPrice,
+      paymentMethod:   paymentMethod || <span class="str">'COD'</span>
+    });
+
+    res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>({ success: <span class="kw">true</span>, order });
+
+  } <span class="kw">catch</span> (error) {
+    res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: error.message });
+  }
+});</pre>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(184,169,255,0.15);color:var(--accent4);">1</span> Why do we fetch the product from DB instead of trusting the browser's price?</div>
+    <div class="explain-body">
+      <strong>Never trust data from the browser for anything financial!</strong> A user could open DevTools, intercept the request, and change the price from ₹8999 to ₹1 before sending it.<br><br>
+      By fetching the product from the database, we always use the <strong>real price from our server</strong>. The browser sends only the <code>productId</code> and <code>quantity</code> — we calculate the total ourselves.
+    </div>
+  </div>
+
+  <div class="explain">
+    <div class="explain-title"><span class="num-badge" style="background:rgba(184,169,255,0.15);color:var(--accent4);">2</span> <code>for...of</code> loop with async/await</div>
+    <div class="explain-body">
+      Notice we use <code>for (const item of items)</code> instead of <code>items.forEach()</code>.<br><br>
+      This is important! <code>await</code> does NOT work inside <code>.forEach()</code> — it would just run everything in parallel without waiting. <code>for...of</code> properly pauses at each <code>await</code> before moving to the next item.<br><br>
+      This ensures we check stock and deduct inventory for each product <strong>one at a time, in order</strong>.
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FRONTEND: INDEX.HTML -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="file-section" id="frontend">
+  <div class="file-header">
+    <div class="file-icon">🌐</div>
+    <div class="file-meta">
+      <div class="file-path">ecommerce/frontend/index.html</div>
+      <div class="file-title">The Entire Frontend — HTML + CSS + JavaScript in One File</div>
+      <div class="file-desc">This single file IS the entire website. It has the page structure (HTML), the design (CSS), and all the interactive logic (JavaScript).</div>
+    </div>
+  </div>
+
+  <!-- CSS Variables -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem;font-size:1.05rem;color:var(--accent2);">Part 1 — CSS Variables (Design System)</div>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>CSS Variables</span></div>
+      <pre><span class="cmt">/* :root means "apply to the whole page" */</span>
+<span class="cls">:root</span> {
+  <span class="prop">--bg</span>:      <span class="num">#0d0d0f</span>;    <span class="cmt">/* main background — very dark */</span>
+  <span class="prop">--surface</span>: <span class="num">#161618</span>;    <span class="cmt">/* card backgrounds — slightly lighter */</span>
+  <span class="prop">--border</span>:  <span class="num">#2a2a2e</span>;    <span class="cmt">/* borders around elements */</span>
+  <span class="prop">--accent</span>:  <span class="num">#e8ff47</span>;    <span class="cmt">/* the yellow-green color for highlights */</span>
+  <span class="prop">--text</span>:    <span class="num">#f0f0f0</span>;    <span class="cmt">/* main text color */</span>
+  <span class="prop">--muted</span>:   <span class="num">#888</span>;       <span class="cmt">/* less important text */</span>
+  <span class="prop">--danger</span>:  <span class="num">#ff4757</span>;    <span class="cmt">/* red for errors/danger */</span>
+  <span class="prop">--success</span>: <span class="num">#2ed573</span>;    <span class="cmt">/* green for success */</span>
+}
+
+<span class="cmt">/* Usage — instead of hardcoding colors everywhere: */</span>
+<span class="cls">.nav-btn</span>:hover { <span class="prop">color</span>: <span class="fn">var</span>(--text); }
+<span class="cmt">/* If you want to change the brand color, just change --accent in ONE place! */</span></pre>
+    </div>
+    <div class="explain-body" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;font-size:0.88rem;line-height:1.8;color:#ccc;margin-top:0.75rem;">
+      <strong>CSS Variables</strong> are like constants in programming. Define a color once in <code>:root</code>, use it everywhere with <code>var(--name)</code>. If you decide to change the accent color from yellow to purple, you change ONE line and the entire site updates.
+    </div>
+  </div>
+
+  <!-- SPA Navigation -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem;font-size:1.05rem;color:var(--accent2);">Part 2 — Single Page App Navigation</div>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>JavaScript — showPage() function</span></div>
+      <pre><span class="cmt">/* Every page is an HTML div. Only ONE has class="active" at a time. */</span>
+<span class="cmt">/* CSS: .page { display: none }  .page.active { display: block } */</span>
+
+<span class="cmt">/* The div sections in HTML: */</span>
+<span class="op">&lt;</span>div id=<span class="str">"page-home"</span>     class=<span class="str">"page active"</span><span class="op">&gt;</span>...Home content...<span class="op">&lt;</span>/div<span class="op">&gt;</span>
+<span class="op">&lt;</span>div id=<span class="str">"page-products"</span> class=<span class="str">"page"</span><span class="op">&gt;</span>...Products list...<span class="op">&lt;</span>/div<span class="op">&gt;</span>
+<span class="op">&lt;</span>div id=<span class="str">"page-cart"</span>     class=<span class="str">"page"</span><span class="op">&gt;</span>...Cart items...<span class="op">&lt;</span>/div<span class="op">&gt;</span>
+
+<span class="cmt">/* JavaScript: switch which div is visible */</span>
+<span class="kw">function</span> <span class="fn">showPage</span>(name) {
+  <span class="cmt">// Remove 'active' class from ALL pages (hides them all)</span>
+  document.<span class="fn">querySelectorAll</span>(<span class="str">'.page'</span>).<span class="fn">forEach</span>(p => p.classList.<span class="fn">remove</span>(<span class="str">'active'</span>));
+
+  <span class="cmt">// Add 'active' class to the one we want (shows only that one)</span>
+  document.<span class="fn">getElementById</span>(<span class="str">`page-${name}`</span>)?.<span class="prop">classList</span>.<span class="fn">add</span>(<span class="str">'active'</span>);
+
+  <span class="cmt">// Update the URL hash so browser history works (back button)</span>
+  window.location.<span class="prop">hash</span> = name;
+
+  <span class="cmt">// Scroll to top when switching pages</span>
+  window.<span class="fn">scrollTo</span>(<span class="num">0</span>, <span class="num">0</span>);
+
+  <span class="cmt">// Load page-specific data if needed</span>
+  <span class="kw">if</span> (name === <span class="str">'products'</span>) <span class="fn">loadProducts</span>(currentPage);
+  <span class="kw">if</span> (name === <span class="str">'cart'</span>)     <span class="fn">renderCart</span>();
+}</pre>
+    </div>
+    <div class="explain-body" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;font-size:0.88rem;line-height:1.8;color:#ccc;margin-top:0.75rem;">
+      This website is a <strong>Single Page Application (SPA)</strong>. Instead of loading a new HTML file for every page, all pages are already loaded as hidden <code>&lt;div&gt;</code>s. JavaScript just shows/hides them by toggling a CSS class. This makes navigation feel instant — no page reload!<br><br>
+      The <code>?.</code> in <code>getElementById()?.classList</code> is called <strong>optional chaining</strong> — if <code>getElementById</code> returns null (element not found), it doesn't crash; it just does nothing.
+    </div>
+  </div>
+
+  <!-- Fetch API -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem;font-size:1.05rem;color:var(--accent2);">Part 3 — Talking to the Backend with fetch()</div>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>JavaScript — login() function with fetch</span></div>
+      <pre><span class="kw">async function</span> <span class="fn">login</span>() {
+  <span class="cmt">// Get values from the form inputs</span>
+  <span class="kw">const</span> email    = document.<span class="fn">getElementById</span>(<span class="str">'login-email'</span>).value;
+  <span class="kw">const</span> password = document.<span class="fn">getElementById</span>(<span class="str">'login-password'</span>).value;
+
+  <span class="kw">try</span> {
+    <span class="cmt">// fetch() sends an HTTP request to the backend</span>
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/auth/login'</span>, {
+      method:  <span class="str">'POST'</span>,                     <span class="cmt">// HTTP method</span>
+      credentials: <span class="str">'include'</span>,              <span class="cmt">// IMPORTANT: send session cookie</span>
+      headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+      body:    <span class="cls">JSON</span>.<span class="fn">stringify</span>({ email, password })  <span class="cmt">// convert object to JSON string</span>
+    });
+
+    <span class="cmt">// Parse the JSON response from the server</span>
+    <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+    <span class="cmt">// data = { success: true, user: { name: "Praveen", ... } }</span>
+
+    <span class="kw">if</span> (data.success) {
+      currentUser = data.user;   <span class="cmt">// save logged-in user globally</span>
+      <span class="fn">updateNavForAuth</span>();         <span class="cmt">// update navbar to show user name</span>
+      <span class="fn">closeModal</span>();
+      <span class="fn">showToast</span>(<span class="str">'✓'</span>, <span class="str">`Welcome back, ${data.user.name}!`</span>);
+    } <span class="kw">else</span> {
+      <span class="cmt">// Show error message below the form</span>
+      document.<span class="fn">getElementById</span>(<span class="str">'login-msg'</span>).textContent = data.message;
+    }
+  } <span class="kw">catch</span> (e) {
+    <span class="cmt">// Network error (server not running)</span>
+    document.<span class="fn">getElementById</span>(<span class="str">'login-msg'</span>).textContent = <span class="str">'Server error.'</span>;
+  }
+}</pre>
+    </div>
+    <div class="explain-body" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;font-size:0.88rem;line-height:1.8;color:#ccc;margin-top:0.75rem;">
+      <strong>fetch()</strong> is the browser's built-in function for making HTTP requests — like calling an API.<br><br>
+      <code>credentials: 'include'</code> — tells fetch to include cookies with the request. Without this, the session cookie won't be sent and the server won't know you're logged in!<br><br>
+      <code>JSON.stringify()</code> converts a JavaScript object to a JSON string for sending. <code>res.json()</code> parses the JSON string back to an object after receiving.
+    </div>
+  </div>
+
+  <!-- Cart -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem;font-size:1.05rem;color:var(--accent2);">Part 4 — Shopping Cart with localStorage</div>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>JavaScript — Cart Logic</span></div>
+      <pre><span class="cmt">// Load cart from localStorage when page loads (persists after refresh)</span>
+<span class="kw">let</span> cart = <span class="cls">JSON</span>.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(<span class="str">'cart'</span>) || <span class="str">'[]'</span>);
+<span class="cmt">// If 'cart' doesn't exist in localStorage yet, use empty array []</span>
+
+<span class="kw">function</span> <span class="fn">addToCart</span>(product, qty = <span class="num">1</span>) {
+  <span class="cmt">// Check if this product is already in the cart</span>
+  <span class="kw">const</span> existing = cart.<span class="fn">find</span>(i => i.id === product.id);
+
+  <span class="kw">if</span> (existing) {
+    existing.qty += qty;   <span class="cmt">// increase quantity if already there</span>
+  } <span class="kw">else</span> {
+    cart.<span class="fn">push</span>({ ...product, qty });  <span class="cmt">// add new item with spread operator</span>
+  }
+
+  <span class="cmt">// Save updated cart to localStorage (as a JSON string)</span>
+  localStorage.<span class="fn">setItem</span>(<span class="str">'cart'</span>, <span class="cls">JSON</span>.<span class="fn">stringify</span>(cart));
+
+  <span class="fn">updateCartBadge</span>();  <span class="cmt">// update the count bubble on cart icon</span>
+  <span class="fn">showToast</span>(<span class="str">'✓'</span>, <span class="str">`${product.name} added to cart`</span>);
+}
+
+<span class="kw">function</span> <span class="fn">updateCartBadge</span>() {
+  <span class="cmt">// Count total items (sum of all quantities)</span>
+  <span class="kw">const</span> count = cart.<span class="fn">reduce</span>((sum, item) => sum + item.qty, <span class="num">0</span>);
+  document.<span class="fn">getElementById</span>(<span class="str">'cart-count'</span>).textContent = count;
+}</pre>
+    </div>
+    <div class="explain-body" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;font-size:0.88rem;line-height:1.8;color:#ccc;margin-top:0.75rem;">
+      <strong>localStorage</strong> is a simple key-value store in the browser. Data survives page refreshes but is wiped when the browser clears data.<br><br>
+      <code>...product</code> is the <strong>spread operator</strong> — it copies all properties of the product object. <code>{ ...product, qty }</code> creates a new object with all product properties PLUS a <code>qty</code> field.<br><br>
+      <code>reduce()</code> is like Python's <code>sum()</code> for arrays with custom logic. It loops through every item and accumulates a value. Here it adds up all <code>qty</code> values to get the total item count.
+    </div>
+  </div>
+
+  <!-- Dynamic HTML -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem;font-size:1.05rem;color:var(--accent2);">Part 5 — Generating HTML Dynamically (Template Literals)</div>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>JavaScript — Product card rendering</span></div>
+      <pre><span class="kw">const</span> res  = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/products?${params}`</span>);
+<span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+<span class="cmt">// data.products = array of product objects from MongoDB</span>
+
+<span class="cmt">// .map() converts each product object into an HTML string</span>
+<span class="cmt">// .join('') joins all strings into one big HTML string</span>
+grid.innerHTML = data.products.<span class="fn">map</span>(p => <span class="str">`
+  &lt;div class="product-card" onclick="showDetail('${p._id}')"&gt;
+    &lt;img src="${p.image}" alt="${p.name}"/&gt;
+    &lt;div class="product-info"&gt;
+      &lt;div class="product-name"&gt;${p.name}&lt;/div&gt;
+      &lt;div class="product-price"&gt;₹${p.price.toLocaleString('en-IN')}&lt;/div&gt;
+      ${p.stock &gt; 0
+        ? <span class="str">`&lt;button onclick="addToCart(...)">Add to Cart&lt;/button&gt;`</span>
+        : <span class="str">`&lt;span&gt;Out of Stock&lt;/span&gt;`</span>
+      }
+    &lt;/div&gt;
+  &lt;/div&gt;
+`</span>).<span class="fn">join</span>(<span class="str">''</span>);</pre>
+    </div>
+    <div class="explain-body" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;font-size:0.88rem;line-height:1.8;color:#ccc;margin-top:0.75rem;">
+      <strong>Template literals</strong> (backtick strings) allow you to embed JavaScript expressions directly inside a string using <code>${}</code>. This is how we build HTML dynamically from data.<br><br>
+      <code>p.price.toLocaleString('en-IN')</code> formats a number like 8999 into "8,999" using Indian number formatting.<br><br>
+      <code>p.stock > 0 ? 'Add to Cart' : 'Out of Stock'</code> is a <strong>ternary operator</strong> — a one-line if-else. If stock > 0 is true, show Add to Cart button. Otherwise show Out of Stock text.<br><br>
+      <code>grid.innerHTML = ...</code> inserts all the generated HTML into the page. This is how 12 product cards appear on screen from database data.
+    </div>
+  </div>
+
+  <!-- Debounce -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem;font-size:1.05rem;color:var(--accent2);">Part 6 — Debouncing (Smart Search)</div>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>JavaScript — Debounce Search</span></div>
+      <pre><span class="kw">let</span> searchTimeout = <span class="kw">null</span>;
+
+<span class="kw">function</span> <span class="fn">debounceSearch</span>() {
+  <span class="cmt">// Cancel any previous pending search</span>
+  <span class="fn">clearTimeout</span>(searchTimeout);
+
+  <span class="cmt">// Wait 400ms after user STOPS typing, THEN search</span>
+  searchTimeout = <span class="fn">setTimeout</span>(() => <span class="fn">loadProducts</span>(<span class="num">1</span>), <span class="num">400</span>);
+}
+
+<span class="cmt">/* In HTML: */</span>
+<span class="op">&lt;</span>input oninput=<span class="str">"debounceSearch()"</span> placeholder=<span class="str">"Search..."</span><span class="op">/&gt;</span>
+<span class="cmt">/* oninput fires EVERY time a key is pressed */</span></pre>
+    </div>
+    <div class="explain-body" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;font-size:0.88rem;line-height:1.8;color:#ccc;margin-top:0.75rem;">
+      Without debouncing, typing "phone" would fire 5 API requests (one per letter). With debouncing, we wait until the user stops typing for 400ms before sending the request.<br><br>
+      <code>clearTimeout()</code> cancels the previous timer. <code>setTimeout()</code> creates a new 400ms delay. So if you type "p", wait, then type "h", the first timer is cancelled and a new one starts. Only when you stop does the search actually happen.
+      <div class="analogy">⌨️ Analogy: Like a search bar in Google that waits for you to finish typing before showing suggestions.</div>
+    </div>
+  </div>
+
+  <!-- Init -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem;font-size:1.05rem;color:var(--accent2);">Part 7 — App Initialization (The Starting Point)</div>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div><span>JavaScript — init() function</span></div>
+      <pre><span class="kw">const</span> API = <span class="str">''</span>;             <span class="cmt">// empty = same server, so /api/... works directly</span>
+<span class="kw">let</span> cart        = <span class="cls">JSON</span>.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(<span class="str">'cart'</span>) || <span class="str">'[]'</span>);
+<span class="kw">let</span> currentUser = <span class="kw">null</span>;       <span class="cmt">// stores logged-in user info</span>
+<span class="kw">let</span> currentPage = <span class="num">1</span>;          <span class="cmt">// pagination tracker</span>
+
+<span class="cmt">// This runs when the browser finishes loading the HTML</span>
+<span class="kw">async function</span> <span class="fn">init</span>() {
+  <span class="fn">updateCartBadge</span>();   <span class="cmt">// show cart count from localStorage</span>
+  <span class="kw">await</span> <span class="fn">checkAuth</span>();   <span class="cmt">// ask server "am I still logged in?"</span>
+
+  <span class="cmt">// Read page from URL hash (#products, #cart, etc.)</span>
+  <span class="kw">const</span> path = window.location.<span class="prop">hash</span>.<span class="fn">replace</span>(<span class="str">'#'</span>, <span class="str">''</span>) || <span class="str">'home'</span>;
+  <span class="fn">showPage</span>(path);
+
+  <span class="kw">if</span> (path === <span class="str">'products'</span> || path === <span class="str">'home'</span>) <span class="fn">loadProducts</span>(<span class="num">1</span>);
+}
+
+<span class="cmt">// Call init() immediately — starts the whole app</span>
+<span class="fn">init</span>();</pre>
+    </div>
+    <div class="explain-body" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;font-size:0.88rem;line-height:1.8;color:#ccc;margin-top:0.75rem;">
+      <code>init()</code> is the app's boot sequence. It runs once when the page loads and sets everything up.<br><br>
+      <code>checkAuth()</code> calls <code>/api/auth/me</code> to ask the server "do I have a valid session?" — this restores your login state after a page refresh, since the session cookie is automatically sent to the server.<br><br>
+      <code>window.location.hash</code> reads the URL fragment (the part after <code>#</code>). If the URL is <code>localhost:5000/#products</code>, the hash is <code>#products</code> and we show the products page automatically.
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="font-size:1.4rem;margin-bottom:0.5rem;">
+    <span style="display:inline-flex;align-items:center;gap:0.5rem;">
+      <span style="background:linear-gradient(135deg,var(--accent),#a8cc00);color:#000;padding:2px 8px;border-radius:5px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;">HV</span>
+      <strong>ShopAura</strong>
+    </span>
+  </div>
+  <p>Code Explanation Document — <strong>Every file. Every line. Explained simply.</strong></p>
+  <p style="margin-top:0.4rem;">CodeAlpha Internship — Task 1: Simple E-commerce Store</p>
+</footer>
+
+</div>
+</body>
+</html>
