@@ -4,6 +4,21 @@ A full-stack e-commerce web application built with **Node.js + Express.js** (bac
 
 ---
 
+## 🌐 Live Demo (GitHub Pages)
+
+**https://238r1a0403-del.github.io/ShopAura-E-Commerce-Website/**
+
+GitHub Pages can only host static files, so the hosted demo runs the real frontend against a
+browser-side mock of the REST API (`frontend/demo-api.js`). Demo accounts, orders and stock
+are stored in the visitor's `localStorage`, so every visitor gets a private sandbox.
+
+- Demo mode turns on automatically on `*.github.io`, or with `?demo=1` on any host.
+- When you run `npm start`, the same `index.html` talks to the real Express + MongoDB backend.
+- Deployment is handled by `.github/workflows/pages.yml` on every push to `main`.
+  One-time setup: **Settings → Pages → Source: GitHub Actions**.
+
+---
+
 ## 📁 Project Structure
 
 ```
@@ -23,7 +38,8 @@ CodeAlpha_EcommerceStore/
 │   │   └── orders.js          # Order management
 │   └── server.js              # Express entry point
 ├── frontend/
-│   └── index.html             # Complete single-page frontend
+│   ├── index.html             # Complete single-page frontend
+│   └── demo-api.js            # Browser-only mock API for the static demo
 ├── .env                       # Environment variables
 ├── package.json
 └── README.md

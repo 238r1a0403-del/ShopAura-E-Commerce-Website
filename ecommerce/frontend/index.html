@@ -592,6 +592,8 @@
   <span id="toast-text">Action completed</span>
 </div>
 
+<!-- Browser-only mock API; activates on GitHub Pages / ?demo=1, no-op with the Express backend -->
+<script src="demo-api.js"></script>
 <script>
   const API = '';
   let cart = JSON.parse(localStorage.getItem('cart') || '[]');

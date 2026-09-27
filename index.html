@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopAura Demo</title>
+  <meta name="description" content="ShopAura — full-stack e-commerce store (Node.js, Express, MongoDB). Live browser demo, architecture diagrams and code walkthrough."/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0d0f; --surface: #161618; --border: #2a2a2e;
+      --accent: #e8ff47; --text: #f0f0f0; --muted: #888;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; line-height: 1.6; }
+    main { max-width: 960px; margin: 0 auto; padding: 4rem 1rem 3rem; }
+    .brand { display: flex; align-items: center; gap: 0.7rem; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; }
+    .logo { width: 38px; height: 38px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #a8cc00); color: #000; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
+    h1 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.1; letter-spacing: -1px; margin: 2.5rem 0 1rem; }
+    h1 span { color: var(--accent); }
+    .lead { color: var(--muted); font-size: 1.1rem; max-width: 620px; }
+    .cta { display: inline-block; margin-top: 2rem; background: var(--accent); color: #000; font-weight: 600; text-decoration: none; padding: 0.85rem 1.6rem; border-radius: 10px; }
+    .cta:hover { filter: brightness(0.92); }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 3.5rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 0.4rem; }
+    .card p { color: var(--muted); font-size: 0.92rem; }
+    .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 3rem; }
+    .chip { border: 1px solid var(--border); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.82rem; color: var(--muted); }
+    .note { margin-top: 2.5rem; color: var(--muted); font-size: 0.88rem; border-left: 3px solid var(--accent); padding-left: 1rem; }
+    code { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0 0.3rem; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand"><div class="logo">SA</div>ShopAura</div>
+    <h1>A full-stack e-commerce store, <span>live in your browser.</span></h1>
+    <p class="lead">Browse products, search and filter, register, fill a cart and place orders. Built with Node.js, Express and MongoDB for the CodeAlpha Full Stack internship.</p>
+    <a class="cta" href="store/">Open the live demo →</a>
+
+    <div class="cards">
+      <a class="card" href="store/">
+        <h2>🛍️ Store demo</h2>
+        <p>The real frontend running against a browser-side mock of the REST API.</p>
+      </a>
+      <a class="card" href="architecture.html">
+        <h2>🧭 Architecture</h2>
+        <p>System architecture, request flow and data-model diagrams.</p>
+      </a>
+      <a class="card" href="code-explanation.html">
+        <h2>📖 Code walkthrough</h2>
+        <p>File-by-file explanation of the backend routes, models and frontend.</p>
+      </a>
+    </div>
+
+    <div class="stack">
+      <span class="chip">HTML5 · CSS3 · Vanilla JS</span>
+      <span class="chip">Node.js</span>
+      <span class="chip">Express.js</span>
+      <span class="chip">MongoDB + Mongoose</span>
+      <span class="chip">express-session + bcrypt</span>
+    </div>
+
+    <p class="note">GitHub Pages can't run a server, so the demo answers API calls inside your browser and stores demo accounts and orders in <code>localStorage</code>. Don't use a real password. To run the full stack with MongoDB, follow the setup steps in <code>ecommerce/README.md</code>.</p>
+  </main>
+</body>
+</html>
