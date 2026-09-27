@@ -14,8 +14,8 @@ are stored in the visitor's `localStorage`, so every visitor gets a private sand
 
 - Demo mode turns on automatically on `*.github.io`, or with `?demo=1` on any host.
 - When you run `npm start`, the same `index.html` talks to the real Express + MongoDB backend.
-- Deployment is handled by `.github/workflows/pages.yml` on every push to `main`.
-  One-time setup: **Settings → Pages → Source: GitHub Actions**.
+- Deployment: **Settings → Pages → Deploy from a branch → `main` / `(root)`**. The root
+  `index.html` is the landing page; the store is served from `ecommerce/frontend/`.
 
 ---
 
